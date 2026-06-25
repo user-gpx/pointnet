@@ -2,7 +2,7 @@
 #include <c10/cuda/CUDAException.h>
 #include <c10/cuda/CUDAGuard.h>
 #include <torch/extension.h>
-
+//真正的CUDA kernel实现 
 template <unsigned int block_size>
 __global__ void farthest_point_sampling_kernel(
     int b,

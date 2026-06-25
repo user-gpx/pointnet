@@ -192,18 +192,18 @@ class PointNetSetAbstraction(nn.Module):
             last_channel = out_channel
         self.group_all = group_all
         se_hidden_channel = max(last_channel // 4, 1)
-        # # added SE attention
-        # self.se_attention = nn.Sequential(
-        #     nn.Linear(last_channel, se_hidden_channel),
-        #     nn.ReLU(inplace=True),
-        #     nn.Linear(se_hidden_channel, last_channel),
-        #     nn.Sigmoid()
-        # )
-        # # added spatial attention
-        # self.spatial_attention = nn.Sequential(
-        #     nn.Conv1d(last_channel, 1, 1),
-        #     nn.Sigmoid()
-        # )
+        # added SE attention
+        self.se_attention = nn.Sequential(
+            nn.Linear(last_channel, se_hidden_channel),
+            nn.ReLU(inplace=True),
+            nn.Linear(se_hidden_channel, last_channel),
+            nn.Sigmoid()
+        )
+        # added spatial attention
+        self.spatial_attention = nn.Sequential(
+            nn.Conv1d(last_channel, 1, 1),
+            nn.Sigmoid()
+        )
 
     def forward(self, xyz, points):
         """
@@ -232,17 +232,17 @@ class PointNetSetAbstraction(nn.Module):
         new_points = torch.max(new_points, 2)[0]
         identity = new_points
 
-        # # added SE attention
-        # se_weight = torch.mean(new_points, dim=2)
-        # se_weight = self.se_attention(se_weight).unsqueeze(-1)
-        # attention_features = new_points * se_weight
+        # added SE attention
+        se_weight = torch.mean(new_points, dim=2)
+        se_weight = self.se_attention(se_weight).unsqueeze(-1)
+        attention_features = new_points * se_weight
 
-        # # added spatial attention
-        # spatial_weight = self.spatial_attention(attention_features)
-        # attention_features = attention_features * spatial_weight
+        # added spatial attention
+        spatial_weight = self.spatial_attention(attention_features)
+        attention_features = attention_features * spatial_weight
 
-        # # residual fusion
-        # new_points = identity + attention_features
+        # residual fusion
+        new_points = identity + attention_features
 
         new_xyz = new_xyz.permute(0, 2, 1)
         return new_xyz, new_points

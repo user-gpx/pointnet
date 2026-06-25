@@ -123,3 +123,6 @@ __pycache__/
 .DS_Store
 .vscode/
 .agents
+
+.gitignore
+.gitattributes

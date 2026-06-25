@@ -1,5 +1,6 @@
 #include <torch/extension.h>
 
+//把 CUDA kernel 包装成 PyTorch 能调用的函数
 torch::Tensor farthest_point_sampling_cuda(torch::Tensor xyz, int npoint, torch::Tensor start_idx);
 torch::Tensor ball_query_cuda(torch::Tensor xyz, torch::Tensor new_xyz, double radius, int nsample);
 

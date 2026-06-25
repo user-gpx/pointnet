@@ -6,6 +6,7 @@ import torch
 _FPS_EXT = None
 _FPS_LOAD_FAILED = False
 
+#用户真正调用的入口 + 自动管理CUDA扩展
 
 def _load_fps_ext():
     global _FPS_EXT, _FPS_LOAD_FAILED
@@ -57,6 +58,7 @@ def farthest_point_sample_cuda(xyz, npoint):
 
 
 def query_ball_point_cuda(radius, nsample, xyz, new_xyz):
+    
     if (
         not xyz.is_cuda
         or not new_xyz.is_cuda
